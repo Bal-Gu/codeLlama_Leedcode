@@ -1,46 +1,15 @@
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.9;
 
-interface IERC20 {
-    function totalSupply() external view returns (uint256);
-    function balanceOf(address account) external view returns (uint256);
-    function transfer(address recipient, uint256 amount) external returns (bool);
-}
+import "./openzeppelin-solidity/token/ERC20/ERC20.sol";
 
-contract MyToken is IERC20 {
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-    uint public totalSupply;
-
-    mapping(address => uint) public balances;
-
-    constructor() public {
-        name = "MyToken";
-        symbol = "MTKN";
-        decimals = 18;
-        totalSupply = 100000000 * 10 ** uint(decimals);
-        balances[msg.sender] = totalSupply;
+contract MyToken is ERC20 {
+    string public name = "My Token";
+    string public symbol = "MTKN";
+    uint8 public decimals = 18;
+    
+     constructor() ERC20(name, symbol) {}
+    
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
     }
-
-    function totalSupply() external view returns (uint256) {
-        return totalSupply;
-    }
-
-    function balanceOf(address account) external view returns (uint256) {
-        return balances[account];
-    }
-
-    function transfer(address recipient, uint256 amount) external returns (bool) {
-        require(amount > 0, "Invalid amount");
-        require(balances[msg.sender] >= amount, "Insufficient balance");
-
-        balances[msg.sender] -= amount;
-        balances[recipient] += amount;
-
-        emit Transfer(msg.sender, recipient, amount);
-
-        return true;
-    }
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
 }
